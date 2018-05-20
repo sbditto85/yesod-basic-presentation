@@ -62,9 +62,14 @@ mkYesodData "App" [parseRoutes|
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 
-/ HomeR GET POST
-/other OtherR GET
-/other/next OtherNextR GET
+/ HomeR GET
+/why WhyR GET
+/intro IntroR GET
+/minimal MinimalR GET
+/foundation FoundationR GET
+/templates TemplatesR GET
+/tools ToolsR GET
+/resources ResourcesR GET
 
 /comments CommentR POST
 |]
@@ -118,13 +123,38 @@ instance Yesod App where
                     , menuItemAccessCallback = True
                     }
                 , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Other"
-                    , menuItemRoute = OtherR
+                    { menuItemLabel = "Why?"
+                    , menuItemRoute = WhyR
                     , menuItemAccessCallback = True
                     }
                 , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Other Next"
-                    , menuItemRoute = OtherNextR
+                    { menuItemLabel = "Intro"
+                    , menuItemRoute = IntroR
+                    , menuItemAccessCallback = True
+                    }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Minimal"
+                    , menuItemRoute = MinimalR
+                    , menuItemAccessCallback = True
+                    }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Foundation"
+                    , menuItemRoute = FoundationR
+                    , menuItemAccessCallback = True
+                    }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Templates"
+                    , menuItemRoute = TemplatesR
+                    , menuItemAccessCallback = True
+                    }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Tools"
+                    , menuItemRoute = ToolsR
+                    , menuItemAccessCallback = True
+                    }
+                , NavbarLeft $ MenuItem
+                    { menuItemLabel = "Resources"
+                    , menuItemRoute = ResourcesR
                     , menuItemAccessCallback = True
                     }
                 ]
@@ -199,8 +229,13 @@ instance YesodBreadcrumbs App where
     breadcrumb :: Route App  -- ^ The route the user is visiting currently.
                -> Handler (Text, Maybe (Route App))
     breadcrumb HomeR       = pure ("Home", Nothing)
-    breadcrumb OtherR      = pure ("Other", Just HomeR)
-    breadcrumb OtherNextR  = pure ("Other Next", Just OtherR)
+    breadcrumb WhyR        = pure ("Why?", Just HomeR)
+    breadcrumb IntroR      = pure ("Intro", Just HomeR)
+    breadcrumb MinimalR    = pure ("Minimal", Just HomeR)
+    breadcrumb FoundationR = pure ("Foundation", Just HomeR)
+    breadcrumb TemplatesR  = pure ("Templates", Just HomeR)
+    breadcrumb ToolsR      = pure ("Tools", Just HomeR)
+    breadcrumb ResourcesR  = pure ("Resources", Just HomeR)
 
     breadcrumb (StaticR _) = pure ("home", Nothing)
     breadcrumb FaviconR    = pure ("home", Nothing)
