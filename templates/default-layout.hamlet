@@ -1,4 +1,3 @@
-
 <!-- Static navbar -->
 <nav .navbar.navbar-default.navbar-static-top>
     <div .container>
@@ -38,7 +37,7 @@
 $if (Just HomeR == mcurrentRoute)
     ^{widget}
 $else
-    <div .container>
+    <div .container #main-container>
         <div .row>
             <div .col-md-12>
                 ^{widget}
@@ -46,5 +45,7 @@ $else
 <!-- Footer -->
 <footer .footer>
     <div .container>
+        <p .center-vert>Find the code for this website at #
+            <a .test-class href="https://github.com/sbditto85/yesod-basic-presentation">https://github.com/sbditto85/yesod-basic-presentation
         <p .text-muted>
             #{appCopyright $ appSettings master}

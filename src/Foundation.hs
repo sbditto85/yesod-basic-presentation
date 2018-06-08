@@ -64,11 +64,23 @@ mkYesodData "App" [parseRoutes|
 
 / HomeR GET
 /why WhyR GET
+/why/typesafe WhyTypeSafeR GET
+/why/typesafe/types TypesR GET
+/why/typesafe/types_graphic TypesGraphicR GET
+/why/typesafe/types_divide TypesDivideR GET
+/why/typesafe/types_safety TypesSafetyR GET
+/why/typesafe/types_yesod TypesYesodR GET
+
 /intro IntroR GET
+
 /minimal MinimalR GET
+
 /foundation FoundationR GET
+
 /templates TemplatesR GET
+
 /tools ToolsR GET
+
 /resources ResourcesR GET
 
 /comments CommentR POST
@@ -127,11 +139,11 @@ instance Yesod App where
                     , menuItemRoute = WhyR
                     , menuItemAccessCallback = True
                     }
-                , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Intro"
-                    , menuItemRoute = IntroR
-                    , menuItemAccessCallback = True
-                    }
+                -- , NavbarLeft $ MenuItem
+                --     { menuItemLabel = "Intro"
+                --     , menuItemRoute = IntroR
+                --     , menuItemAccessCallback = True
+                --     }
                 , NavbarLeft $ MenuItem
                     { menuItemLabel = "Minimal"
                     , menuItemRoute = MinimalR
@@ -221,6 +233,75 @@ instance Yesod App where
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
 
+presentationLayout :: Maybe (Route App) -- ^ Back route
+                   -> Maybe (Route App) -- ^ Forward route
+                   -> Text              -- ^ Page title
+                   -> Widget            -- ^ Main content
+                   -> Handler Html
+presentationLayout mBackRoute mForwardRoute title widget =
+  defaultLayout $ do
+    case mBackRoute of
+      Nothing ->
+        pure ()
+      Just route ->
+        backWidget route
+    case mForwardRoute of
+      Nothing ->
+        pure ()
+      Just route ->
+        forwardWidget route
+    mCurrentRoute <- getCurrentRoute
+    setTitle $ toHtml title
+    [whamlet|
+      $case mCurrentRoute
+        $of Just HomeR
+        $of _
+          <h1 .center-vert>#{title}
+      ^{widget}
+    |]
+
+  where
+    backWidget route = do
+      toWidget [lucius|
+              .back-button {
+                position: fixed;
+                top: 100px;
+                left: 30px;
+                button {
+                  display: inline-block;
+                  height: 600px;
+                  width: 100px;
+                  background: transparent;
+                  border: 0px;
+                }
+              }
+      |]
+      [whamlet|
+              <div .back-button>
+                <button type="button" onclick="location.href='@{route}'"><<
+      |]
+
+    forwardWidget route = do
+      toWidget [lucius|
+              .forward-button {
+                position: fixed;
+                top: 100px;
+                right: 30px;
+                button {
+                  display: inline-block;
+                  height: 600px;
+                  width: 100px;
+                  background: transparent;
+                  border: 0px;
+                }
+              }
+      |]
+      [whamlet|
+              <div .forward-button>
+                <button type="button" onclick="location.href='@{route}'">>>
+      |]
+
+
 -- Define breadcrumbs.
 instance YesodBreadcrumbs App where
     -- Takes the route that the user is currently on, and returns a tuple
@@ -228,19 +309,25 @@ instance YesodBreadcrumbs App where
     -- breadcrumb route.
     breadcrumb :: Route App  -- ^ The route the user is visiting currently.
                -> Handler (Text, Maybe (Route App))
-    breadcrumb HomeR       = pure ("Home", Nothing)
-    breadcrumb WhyR        = pure ("Why?", Just HomeR)
-    breadcrumb IntroR      = pure ("Intro", Just HomeR)
-    breadcrumb MinimalR    = pure ("Minimal", Just HomeR)
-    breadcrumb FoundationR = pure ("Foundation", Just HomeR)
-    breadcrumb TemplatesR  = pure ("Templates", Just HomeR)
-    breadcrumb ToolsR      = pure ("Tools", Just HomeR)
-    breadcrumb ResourcesR  = pure ("Resources", Just HomeR)
+    breadcrumb HomeR         = pure ("Home", Nothing)
+    breadcrumb WhyR          = pure ("Why?", Just HomeR)
+    breadcrumb WhyTypeSafeR  = pure ("Why Type Safe?", Just WhyR)
+    breadcrumb TypesR        = pure ("Types", Just WhyTypeSafeR)
+    breadcrumb TypesGraphicR = pure ("Graphic", Just TypesR)
+    breadcrumb TypesDivideR  = pure ("Division", Just TypesR)
+    breadcrumb TypesSafetyR  = pure ("Safety", Just TypesR)
+    breadcrumb TypesYesodR   = pure ("Yesod", Just TypesR)
+    breadcrumb IntroR        = pure ("Intro", Just HomeR)
+    breadcrumb MinimalR      = pure ("Minimal", Just HomeR)
+    breadcrumb FoundationR   = pure ("Foundation", Just HomeR)
+    breadcrumb TemplatesR    = pure ("Templates", Just HomeR)
+    breadcrumb ToolsR        = pure ("Tools", Just HomeR)
+    breadcrumb ResourcesR    = pure ("Resources", Just HomeR)
 
-    breadcrumb (StaticR _) = pure ("home", Nothing)
-    breadcrumb FaviconR    = pure ("home", Nothing)
-    breadcrumb RobotsR     = pure ("home", Nothing)
-    breadcrumb CommentR    = pure ("home", Nothing)
+    breadcrumb (StaticR _)   = pure ("home", Nothing)
+    breadcrumb FaviconR      = pure ("home", Nothing)
+    breadcrumb RobotsR       = pure ("home", Nothing)
+    breadcrumb CommentR      = pure ("home", Nothing)
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
