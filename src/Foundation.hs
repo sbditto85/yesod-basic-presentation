@@ -79,6 +79,10 @@ mkYesodData "App" [parseRoutes|
 
 /templates TemplatesR GET
 
+/core CoreR GET
+
+/yesod-auth YesodAuthIllustratedR GET
+
 /tools ToolsR GET
 
 /resources ResourcesR GET
@@ -149,14 +153,19 @@ instance Yesod App where
                     , menuItemRoute = MinimalR
                     , menuItemAccessCallback = True
                     }
+                -- , NavbarLeft $ MenuItem
+                --     { menuItemLabel = "Foundation"
+                --     , menuItemRoute = FoundationR
+                --     , menuItemAccessCallback = True
+                --     }
+                -- , NavbarLeft $ MenuItem
+                --     { menuItemLabel = "Templates"
+                --     , menuItemRoute = TemplatesR
+                --     , menuItemAccessCallback = True
+                --     }
                 , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Foundation"
-                    , menuItemRoute = FoundationR
-                    , menuItemAccessCallback = True
-                    }
-                , NavbarLeft $ MenuItem
-                    { menuItemLabel = "Templates"
-                    , menuItemRoute = TemplatesR
+                    { menuItemLabel = "Core Concepts"
+                    , menuItemRoute = CoreR
                     , menuItemAccessCallback = True
                     }
                 , NavbarLeft $ MenuItem
@@ -309,25 +318,35 @@ instance YesodBreadcrumbs App where
     -- breadcrumb route.
     breadcrumb :: Route App  -- ^ The route the user is visiting currently.
                -> Handler (Text, Maybe (Route App))
-    breadcrumb HomeR         = pure ("Home", Nothing)
-    breadcrumb WhyR          = pure ("Why?", Just HomeR)
-    breadcrumb WhyTypeSafeR  = pure ("Why Type Safe?", Just WhyR)
-    breadcrumb TypesR        = pure ("Types", Just WhyTypeSafeR)
-    breadcrumb TypesGraphicR = pure ("Graphic", Just TypesR)
-    breadcrumb TypesDivideR  = pure ("Division", Just TypesR)
-    breadcrumb TypesSafetyR  = pure ("Safety", Just TypesR)
-    breadcrumb TypesYesodR   = pure ("Yesod", Just TypesR)
-    breadcrumb IntroR        = pure ("Intro", Just HomeR)
-    breadcrumb MinimalR      = pure ("Minimal", Just HomeR)
-    breadcrumb FoundationR   = pure ("Foundation", Just HomeR)
-    breadcrumb TemplatesR    = pure ("Templates", Just HomeR)
-    breadcrumb ToolsR        = pure ("Tools", Just HomeR)
-    breadcrumb ResourcesR    = pure ("Resources", Just HomeR)
+    breadcrumb HomeR                 = pure ("Home", Nothing)
+    breadcrumb WhyR                  = pure ("Why?", Just HomeR)
+    breadcrumb WhyTypeSafeR          = pure ("Why Type Safe?", Just WhyR)
+    breadcrumb TypesR                = pure ("Types", Just WhyTypeSafeR)
+    breadcrumb TypesGraphicR         = pure ("Graphic", Just TypesR)
+    breadcrumb TypesDivideR          = pure ("Division", Just TypesR)
+    breadcrumb TypesSafetyR          = pure ("Safety", Just TypesR)
+    breadcrumb TypesYesodR           = pure ("Yesod", Just TypesR)
 
-    breadcrumb (StaticR _)   = pure ("home", Nothing)
-    breadcrumb FaviconR      = pure ("home", Nothing)
-    breadcrumb RobotsR       = pure ("home", Nothing)
-    breadcrumb CommentR      = pure ("home", Nothing)
+    breadcrumb IntroR                = pure ("Intro", Just HomeR)
+
+    breadcrumb MinimalR              = pure ("Minimal", Just HomeR)
+
+    breadcrumb FoundationR           = pure ("Foundation", Just HomeR)
+
+    breadcrumb TemplatesR            = pure ("Templates", Just HomeR)
+
+    breadcrumb CoreR                 = pure ("Core", Just HomeR)
+
+    breadcrumb YesodAuthIllustratedR = pure ("Yesod Auth", Just HomeR)
+
+    breadcrumb ToolsR                = pure ("Tools", Just HomeR)
+
+    breadcrumb ResourcesR            = pure ("Resources", Just HomeR)
+
+    breadcrumb (StaticR _)           = pure ("home", Nothing)
+    breadcrumb FaviconR              = pure ("home", Nothing)
+    breadcrumb RobotsR               = pure ("home", Nothing)
+    breadcrumb CommentR              = pure ("home", Nothing)
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.

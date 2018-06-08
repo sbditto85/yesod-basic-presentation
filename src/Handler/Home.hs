@@ -33,6 +33,9 @@ getWhyR = do
   <li>Template Haskell to remove boilerplate
   <li>Fast execution
   <li>Fast enough development
+    <ul>
+      <li>REPL
+      <li>Type Inference
   <li>Easier to maintain
   <li>Type Safe
 |]
@@ -60,7 +63,7 @@ getTypesR = do
 
 getTypesGraphicR :: Handler Html
 getTypesGraphicR = do
-  presentationLayout (Just TypesR) (Just TypesDivideR) "Type Illustration" $ do
+  presentationLayout (Just TypesR) (Just TypesSafetyR) "Type Illustration" $ do
     codeHighlight
     [whamlet|
 <pre>
@@ -70,13 +73,25 @@ getTypesGraphicR = do
 |]
 
 
+getTypesSafetyR :: Handler Html
+getTypesSafetyR = do
+  presentationLayout (Just TypesGraphicR) (Just TypesDivideR) "Type Safety" $ do
+    codeHighlight
+    [whamlet|
+<h2 .center-vert>"Making Impossible States Impossible" by Richard Feldman
+<p .center-vert>
+  <a href="https://www.youtube.com/watch?v=IcgmSRJHu_8">https://www.youtube.com/watch?v=IcgmSRJHu_8
+<p .center-vert>
+  <img src=@{StaticR img_string_string_string_png} alt="Types are a lie" style="height:450px">
+|]
+
 getTypesDivideR :: Handler Html
 getTypesDivideR = do
   let mResult :: Maybe Int
       mResult = do
         d <- newDenominator 10
         Just $ safeDivide 100 d
-  presentationLayout (Just TypesGraphicR) (Just TypesSafetyR) "Now for Some Code!" $ do
+  presentationLayout (Just TypesSafetyR) (Just TypesYesodR) "Now for Some Code!" $ do
     codeHighlight
     [whamlet|
 <pre>
@@ -116,22 +131,9 @@ getTypesDivideR = do
       \RESULT:\n"
 
 
-getTypesSafetyR :: Handler Html
-getTypesSafetyR = do
-  presentationLayout (Just TypesDivideR) (Just TypesYesodR) "Type Safety" $ do
-    codeHighlight
-    [whamlet|
-<h2 .center-vert>"Making Impossible States Impossible" by Richard Feldman
-<p .center-vert>
-  <a href="https://www.youtube.com/watch?v=IcgmSRJHu_8">https://www.youtube.com/watch?v=IcgmSRJHu_8
-<p .center-vert>
-  <img src=@{StaticR img_string_string_string_png} alt="Types are a lie" style="height:450px">
-|]
-
-
 getTypesYesodR :: Handler Html
 getTypesYesodR = do
-  presentationLayout (Just TypesSafetyR) Nothing "Type Safety with Yesod" $ do
+  presentationLayout (Just TypesDivideR) (Just MinimalR) "Type Safety with Yesod" $ do
     codeHighlight
     [whamlet|
 <p .center-vert>
@@ -148,7 +150,7 @@ getIntroR = do
 
 getMinimalR :: Handler Html
 getMinimalR = do
-  presentationLayout Nothing Nothing "" $ do
+  presentationLayout (Just TypesYesodR) (Just CoreR) "" $ do
     codeHighlight
     [whamlet|
 <pre>
@@ -207,25 +209,79 @@ getTemplatesR = do
 |]
 
 
-getToolsR :: Handler Html
-getToolsR = do
-  presentationLayout Nothing Nothing "" $ do
+getCoreR :: Handler Html
+getCoreR = do
+  presentationLayout (Just MinimalR) (Just YesodAuthIllustratedR) "Core Yesod Concepts" $ do
     [whamlet|
 <ul .bullet-points>
-  <li>stack templates
-  <li>stack new my-test-site yesod-postgres
-  <li>stack ghci
-  <li>ghcid
+  <li>There is a Core App Type
+  <li>Core App Type is an instance of <a href="https://hackage.haskell.org/package/yesod-core-1.6.5/docs/Yesod-Core.html#t:Yesod">Yesod</a> and <a href="https://hackage.haskell.org/package/yesod-core-1.6.5/docs/Yesod-Core.html#t:YesodDispatch">YesodDispatch</a>
+  <li>Use Widgets to build your pages
+  <li>Plugin and use what you need
+    <ul>
+      <li>
+        <a href="https://hackage.haskell.org/package/yesod-auth">Yesod-Auth
+      <li>
+        <a href="https://hackage.haskell.org/package/shakespeare-2.0.15/docs/Text-Hamlet.html">Hamlet
+      <li>
+        <a href="https://hackage.haskell.org/package/shakespeare-2.0.15/docs/Text-Cassius.html">Cassius
+      <li>
+        <a href="https://hackage.haskell.org/package/shakespeare-2.0.15/docs/Text-Lucius.html">Lucius
+      <li>
+        <a href="https://hackage.haskell.org/package/shakespeare-2.0.15/docs/Text-Julius.html">Julius
+|]
+
+
+getYesodAuthIllustratedR :: Handler Html
+getYesodAuthIllustratedR = do
+  presentationLayout (Just CoreR) (Just ToolsR) "Yesod Auth Illustrated" $ do
+    codeHighlight
+    [whamlet|
+<p .center-vert>
+  <img src=@{StaticR img_yesod_auth_png} alt="Types are a lie" style="height:450px">
+|]
+
+getToolsR :: Handler Html
+getToolsR = do
+  presentationLayout (Just YesodAuthIllustratedR) (Just ResourcesR) "Tools" $ do
+    [whamlet|
+<ul .bullet-points>
+  <li>
+    <a href="https://docs.haskellstack.org/en/stable/README/">stack
+    <ol>
+      <li>stack templates
+      <li>stack new my-yesod-site yesod-postgres
+      <li>stack build
+      <li> ... wait forever ...
+      <li>stack ghci
+  <li>
+    <a href="http://www.parsonsmatt.org/2018/05/19/ghcid_for_the_win.html">ghcid
+  <li>
+    <a href="https://hoogle.haskell.org/">hoogle
+  <li>Various editor plugins
 |]
 
 
 getResourcesR :: Handler Html
 getResourcesR = do
-  presentationLayout Nothing Nothing "" $ do
+  presentationLayout (Just ToolsR) Nothing "Resources" $ do
     [whamlet|
 <ul .bullet-points>
   <li>
     <a href="https://www.yesodweb.com/">https://www.yesodweb.com/
+  <li>
+    <a href="https://www.stackage.org/">https://www.stackage.org/
+  <li>
+    <a href="https://hackage.haskell.org/">https://hackage.haskell.org/
+  <li>
+    <a href="http://haskellbook.com/">http://haskellbook.com/
+    (costs money)
+  <li>
+    <a href="http://learnyouahaskell.com/">http://learnyouahaskell.com/
+  <li>
+    <a href="https://github.com/sbditto85/yesod-basic-presentation">This presentation
+  <li>
+    Your computer and GHCI (stack ghci in your project)
 |]
 
 
